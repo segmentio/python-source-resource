@@ -1,6 +1,6 @@
 from dateutil.parser import parse as parse_date
+from segment_source import get_source
 from dateutil.tz import tzlocal
-from source import get_source
 from pydash import omit
 import datetime
 

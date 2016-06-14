@@ -1,5 +1,0 @@
---index-url https://pypi.python.org/simple/
-
-git+ssh://git@github.com/segmentio/python-source.git@0.0.2
-
--e .
