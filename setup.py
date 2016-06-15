@@ -12,6 +12,6 @@ setup(
     install_requires=[
         'pydash==3.4.3',
         'python-dateutil==2.5.3',
-        'segment_source==0.0.2'
+        'segment_source==0.0.3'
     ]
 )
