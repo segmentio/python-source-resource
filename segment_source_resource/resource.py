@@ -46,11 +46,11 @@ class Resource:
     def fetch(self, seed):
         return self._fetch(seed)
 
-    def transform(self, obj):
+    def transform(self, obj, seed=None):
         ret = {}
 
         if self._transform:
-            obj = self._transform(obj)
+            obj = self._transform(obj, seed)
 
         for column, definition in self._schema.items():
             source_name = definition.get('api_name', column)

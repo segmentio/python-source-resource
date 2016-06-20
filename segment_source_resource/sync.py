@@ -2,7 +2,7 @@ def _process_resource(resource, resources, seed):
     objects = resource.fetch(seed)
 
     for obj in objects:
-        morphed = resource.transform(obj)
+        morphed = resource.transform(obj, seed)
         resource.set(morphed)
 
         _enqueue_children(resource, resources, obj)
