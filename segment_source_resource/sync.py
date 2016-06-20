@@ -11,6 +11,6 @@ def _enqueue_children(parent, resources, seed):
     for resource in [r for r in resources if r.parent == parent.collection]:
         _process_resource(resource, resources, seed)
 
-def execute(resources, seed):
+def execute(resources, seed=None):
     for resource in [r for r in resources if not r.parent]:
         _process_resource(resource, resources, seed)
