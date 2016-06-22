@@ -51,7 +51,7 @@ class Resource:
             if isinstance(source_name, str):
                 source_value = obj.get(source_name)
             elif isinstance(source_name, list):
-                get(obj, source_name)
+                source_value = get(obj, source_name)
             else:
                 raise ValueError("Invalid path: {}".format(source_name))
 
