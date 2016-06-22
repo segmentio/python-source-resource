@@ -1,7 +1,7 @@
 from dateutil.parser import parse as parse_date
 from segment_source import get_source
 from dateutil.tz import tzlocal
-from pydash import omit
+from pydash import get, omit
 import datetime
 
 source = get_source()
@@ -26,13 +26,7 @@ class Resource:
     }
 
     def __init__(self, collection, fetch, schema, parent=None, transform=None):
-        # Validations ->
-        # Prefer custom validation exceptions to assertions? These are mainly
-        # to prevent developer errors so I thought they'd be a god .
         assert callable(fetch)
-        # assert validate_schema(schema) ->
-        # - Instance method (e.g. `self.validate_schema`)?
-        # -- If so, call after assignment?
         assert callable(transform) or transform is None
         assert isinstance(parent, str) or parent is None
 
@@ -53,8 +47,14 @@ class Resource:
             obj = self._transform(obj, seed)
 
         for column, definition in self._schema.items():
-            source_name = definition.get('api_name', column)
-            source_value = obj.get(source_name)
+            source_name = definition.get('path', column)
+            if isinstance(source_name, str):
+                source_value = obj.get(source_name)
+            elif isinstance(source_name, list):
+                get(obj, source_name)
+            else:
+                raise ValueError("Invalid path: {}".format(source_name))
+
             if source_value is None: continue
 
             if callable(definition['type']):
@@ -62,7 +62,7 @@ class Resource:
             elif definition['type'] in self._parser_map:
                 parser_func = self._parser_map[definition['type']]
             else:
-                raise ValueError("Invalid schema definition: {}".format(definition['type']))
+                raise ValueError("Invalid type: {}".format(definition['type']))
 
             ret[column] = parser_func(source_value)
 
