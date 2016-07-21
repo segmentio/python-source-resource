@@ -16,7 +16,7 @@ def _create_error_handler(collection):
             message = 'Unexpected failure'
             errors.append(job.exception)
 
-        source.report_error(collection, message)
+        source.report_error(message, collection)
 
     return handler
 
