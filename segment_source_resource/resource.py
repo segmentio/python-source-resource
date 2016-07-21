@@ -1,10 +1,9 @@
 from dateutil.parser import parse as parse_date
-from segment_source import get_source
+from segment_source import client as source
 from dateutil.tz import tzlocal
 from pydash import get, omit
 import datetime
-
-source = get_source()
+import numbers
 
 def serialize_datetime(timestamp):
     if isinstance(timestamp, datetime.date):
@@ -17,19 +16,38 @@ def serialize_datetime(timestamp):
 
     return timestring
 
+def serialize_boolean(val):
+    if isinstance(val, bool): return val
+
+    if isinstance(val, str):
+        lowercased = val.lower()
+        if lowercased == 'false': return False
+        if lowercased == 'true': return True
+
+    if isinstance(val, numbers.Number):
+        as_int = int(val)
+        if as_int == 0: return False
+        if as_int == 1: return True
+
+    raise TypeError(("serialize_boolean() argument must be a boolean, string,",
+        "or number, not a {}").format(type(val)))
+
 class Resource:
+
     _parser_map = {
         'string': str,
         'float': float,
         'integer': int,
+        'boolean': serialize_boolean,
         'datetime': serialize_datetime
     }
 
-    def __init__(self, collection, fetch, schema, parent=None, transform=None):
+    def __init__(self, name, collection, fetch, schema, parent=None, transform=None):
         assert callable(fetch)
         assert callable(transform) or transform is None
         assert isinstance(parent, str) or parent is None
 
+        self.name = name
         self.collection = collection
         self.parent = parent
 
@@ -37,8 +55,8 @@ class Resource:
         self._schema = schema
         self._transform = transform
 
-    def fetch(self, seed):
-        return self._fetch(seed)
+    def fetch(self, seed, consume):
+        return self._fetch(seed, consume)
 
     def transform(self, obj, seed=None):
         ret = {}
@@ -64,7 +82,15 @@ class Resource:
             else:
                 raise ValueError("Invalid type: {}".format(definition['type']))
 
-            ret[column] = parser_func(source_value)
+            try:
+                ret[column] = parser_func(source_value)
+            except (ValueError, TypeError) as err:
+                message = "Failed to cast {} with value {} to {}".format(
+                    column,
+                    source_value,
+                    definition['type'],
+                )
+                raise ValueError(message) from err
 
         return ret
 
