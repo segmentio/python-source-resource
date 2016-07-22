@@ -25,12 +25,6 @@ def _spawn_collection(collection, *args):
     job.link_exception(_create_error_handler(collection))
     return job
 
-def _consume_object(resources, resource, seed, obj):
-    morphed = resource.transform(obj, seed)
-    resource.set(morphed)
-
-    _enqueue_children(resources, obj, resource)
-
 def _process_resource(resources, seed, resource):
     def consume(obj):
         morphed = resource.transform(obj, seed)
