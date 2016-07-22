@@ -1,54 +1,58 @@
-from segment_source_resource.exceptions import PublicError
-from segment_source import client as source
-import gevent
 import sys
 
-errors = []
+from gevent.pool import Group
+import gevent
+
+from segment_source_resource.exceptions import PublicError
+from segment_source import client as source
+
+
+_errors = []
 
 def _create_error_handler(collection):
-    def handler(job):
+    def handler(thread):
         print("{} failed".format(collection))
-        print(job.exception)
+        print(thread.exception)
 
-        if isinstance(job.exception, PublicError):
-            message = job.exception.__str__()
+        if isinstance(thread.exception, PublicError):
+            message = thread.exception.__str__()
         else:
             message = 'Unexpected failure'
-            errors.append(job.exception)
+            _errors.append(thread.exception)
 
         source.report_error(message, collection)
 
     return handler
 
-def _spawn_collection(collection, *args):
-    job = gevent.spawn(*args)
-    job.link_exception(_create_error_handler(collection))
-    return job
 
 def _process_resource(resources, seed, resource):
+    threads = Group()
+
     def consume(obj):
         morphed = resource.transform(obj, seed)
-        resource.set(morphed)
-
-        _enqueue_children(resources, obj, resource)
+        threads.spawn(resource.set, morphed)
+        threads.spawn(_enqueue_children, resources, obj, resource)
 
     objects = resource.fetch(seed, consume)
+    threads.join()
+
 
 def _enqueue_children(resources, seed, parent):
-    target_resources = [r for r in resources if r.parent == parent.name]
+    threads = Group()
+    for resource in [r for r in resources if r.parent == parent.name]:
+        thread = threads.spawn(_process_resource, resources, seed, resource)
+        thread.link_exception(_create_error_handler(resource.collection))
 
-    jobs = []
-    for resource in target_resources:
-        jobs.append(_spawn_collection(resource.collection, _process_resource,
-                    resources, seed, resource))
-    gevent.joinall(jobs)
+    threads.join()
+
 
 def execute(resources, seed=None):
-    jobs = []
+    threads = Group()
     for resource in [r for r in resources if not r.parent]:
-        jobs.append(_spawn_collection(resource.collection, _process_resource,
-                    resources, seed, resource))
-    gevent.joinall(jobs)
+        thread = threads.spawn(_process_resource, resources, seed, resource)
+        thread.link_exception(_create_error_handler(resource.collection))
 
-    if len(errors):
+    threads.join()
+
+    if len(_errors):
         sys.exit(1)
