@@ -22,6 +22,7 @@ def _create_error_handler(collection):
 
     return handler
 
+
 def _process_resource(resources, seed, resource):
     def consume(obj):
         morphed = resource.transform(obj, seed)
