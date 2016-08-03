@@ -26,15 +26,13 @@ def _create_error_handler(collection):
 
 
 def _process_resource(resources, seed, resource):
-    threads = Group()
-
     def consume(obj):
         morphed = resource.transform(obj, seed)
-        threads.spawn(resource.set, morphed)
-        threads.spawn(_enqueue_children, resources, obj, resource)
+        resource.set(morphed)
+
+        _enqueue_children(resources, obj, resource)
 
     objects = resource.fetch(seed, consume)
-    threads.join()
 
 
 def _enqueue_children(resources, seed, parent):
