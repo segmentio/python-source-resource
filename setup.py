@@ -13,6 +13,6 @@ setup(
         'pydash==3.4.3',
         'gevent==1.1.1',
         'python-dateutil==2.5.3',
-        'segment_source==0.5.0'
+        'segment_source==0.6.0'
     ]
 )
