@@ -1,13 +1,13 @@
 import sys
 
 from gevent.pool import Group
-import gevent
 
 from segment_source_resource.exceptions import PublicError
 from segment_source import client as source
 
 
 _errors = []
+
 
 def _create_error_handler(collection):
     def handler(thread):
@@ -26,13 +26,11 @@ def _create_error_handler(collection):
 
 
 def _process_resource(resources, seed, resource):
-    def consume(obj):
+    for obj in resource.fetch(seed):
         morphed = resource.transform(obj, seed)
         resource.set(morphed)
 
         _enqueue_children(resources, obj, resource)
-
-    objects = resource.fetch(seed, consume)
 
 
 def _enqueue_children(resources, seed, parent):

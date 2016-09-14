@@ -1,9 +1,11 @@
+import datetime
+import numbers
+
 from dateutil.parser import parse as parse_date
 from segment_source import client as source
 from dateutil.tz import tzlocal
 from pydash import get, omit
-import datetime
-import numbers
+
 
 def serialize_datetime(timestamp):
     if isinstance(timestamp, datetime.date):
@@ -15,6 +17,7 @@ def serialize_datetime(timestamp):
     timestring = with_timezone.isoformat()
 
     return timestring
+
 
 def serialize_boolean(val):
     if isinstance(val, bool): return val
@@ -29,10 +32,27 @@ def serialize_boolean(val):
         if as_int == 0: return False
         if as_int == 1: return True
 
-    raise TypeError(("serialize_boolean() argument must be a boolean, string,",
-        "or number, not a {}").format(type(val)))
+    raise TypeError("serialize_boolean() argument must be a boolean, string, "
+                    "or number, not a {}".format(type(val)))
 
-class Resource:
+
+class Resource(object):
+    parent = None
+
+    @property
+    def name(self):
+        raise NotImplementedError
+
+    @property
+    def collection(self):
+        raise NotImplementedError
+
+    @property
+    def schema(self):
+        raise NotImplementedError
+
+    def fetch(self, seed):
+        raise NotImplementedError
 
     _parser_map = {
         'string': str,
@@ -42,29 +62,10 @@ class Resource:
         'datetime': serialize_datetime
     }
 
-    def __init__(self, name, collection, fetch, schema, parent=None, transform=None):
-        assert callable(fetch)
-        assert callable(transform) or transform is None
-        assert isinstance(parent, str) or parent is None
-
-        self.name = name
-        self.collection = collection
-        self.parent = parent
-
-        self._fetch = fetch
-        self._schema = schema
-        self._transform = transform
-
-    def fetch(self, seed, consume):
-        return self._fetch(seed, consume)
-
     def transform(self, obj, seed=None):
         ret = {}
 
-        if self._transform:
-            obj = self._transform(obj, seed)
-
-        for column, definition in self._schema.items():
+        for column, definition in self.schema.items():
             source_name = definition.get('path', column)
             if isinstance(source_name, str):
                 source_value = obj.get(source_name)
