@@ -62,10 +62,12 @@ class Resource(object):
         'datetime': serialize_datetime
     }
 
-    def transform(self, obj, seed=None):
-        ret = {}
+    def transform(self, obj, seed=None, schema=None):
+        if schema is None:
+            schema = self.schema
 
-        for column, definition in self.schema.items():
+        ret = {}
+        for column, definition in schema.items():
             source_name = definition.get('path', column)
             if isinstance(source_name, str):
                 source_value = obj.get(source_name)
