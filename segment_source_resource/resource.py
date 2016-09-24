@@ -2,9 +2,8 @@ import datetime
 import numbers
 
 from dateutil.parser import parse as parse_date
-from segment_source import client as source
 from dateutil.tz import tzlocal
-from pydash import get, omit
+from pydash import get
 
 
 def serialize_datetime(timestamp):
@@ -36,6 +35,20 @@ def serialize_boolean(val):
                     "or number, not a {}".format(type(val)))
 
 
+class RawObj(object):
+    def __init__(self, data, collection, schema):
+        self.data = data
+        self.collection = collection
+        self.schema = schema
+
+
+class Obj(object):
+    def __init__(self, id, properties, collection):
+        self.id = id
+        self.properties = properties
+        self.collection = collection
+
+
 class Resource(object):
     parent = None
 
@@ -52,6 +65,12 @@ class Resource(object):
         raise NotImplementedError
 
     def fetch(self, seed):
+        """
+        can yield values of:
+        dict (in this case the're casted to instances RawObj using resource's default collection and schema)
+        object of RawObj (such objects will be transformed to Obj using resource's transform method)
+        object of Obj (will be set as is)
+        """
         raise NotImplementedError
 
     _parser_map = {
@@ -62,17 +81,19 @@ class Resource(object):
         'datetime': serialize_datetime
     }
 
-    def transform(self, obj, seed=None, schema=None):
-        if schema is None:
-            schema = self.schema
+    def transform(self, raw_obj, seed=None):
+        obj = Obj(
+            id=None,
+            properties={},
+            collection=raw_obj.collection,
+        )
 
-        ret = {}
-        for column, definition in schema.items():
+        for column, definition in raw_obj.schema.items():
             source_name = definition.get('path', column)
             if isinstance(source_name, str):
-                source_value = obj.get(source_name)
+                source_value = raw_obj.data.get(source_name)
             elif isinstance(source_name, list):
-                source_value = get(obj, source_name)
+                source_value = get(raw_obj.data, source_name)
             else:
                 raise ValueError("Invalid path: {}".format(source_name))
 
@@ -86,7 +107,11 @@ class Resource(object):
                 raise ValueError("Invalid type: {}".format(definition['type']))
 
             try:
-                ret[column] = parser_func(source_value)
+                if column == 'id':
+                    obj.id = parser_func(source_value)
+                else:
+                    obj.properties[column] = parser_func(source_value)
+
             except (ValueError, TypeError) as err:
                 message = "Failed to cast {} with value {} to {}".format(
                     column,
@@ -95,7 +120,4 @@ class Resource(object):
                 )
                 raise ValueError(message) from err
 
-        return ret
-
-    def set(self, obj):
-        source.set(self.collection, obj['id'], omit(obj, 'id'))
+        return obj
