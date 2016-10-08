@@ -2,7 +2,7 @@ import sys
 
 from gevent.pool import Group
 
-from segment_source_resource.exceptions import PublicError
+from segment_source_resource.exceptions import PublicError, RunError
 from segment_source_resource.resource import RawObj, Obj
 from segment_source import client as source
 
@@ -58,4 +58,4 @@ def execute(resources, seed=None):
     threads.join()
 
     if len(_errors):
-        sys.exit(1)
+        raise RunError("Resource group failed", _errors)
