@@ -1,5 +1,5 @@
 from setuptools import setup
-import os
+
 
 setup(
     name='segment_source_resource',
@@ -13,6 +13,6 @@ setup(
         'pydash==3.4.3',
         'gevent==1.1.1',
         'python-dateutil==2.5.3',
-        'segment_source==0.7.0'
+        'segment_source==0.9.1'
     ]
 )
