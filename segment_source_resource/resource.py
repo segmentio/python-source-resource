@@ -1,5 +1,6 @@
 import datetime
 import numbers
+import logging
 
 from dateutil.parser import parse as parse_date
 from dateutil.tz import tzlocal
@@ -119,5 +120,8 @@ class Resource(object):
                     definition['type'],
                 )
                 raise ValueError(message) from err
+
+        if not obj.id:
+            logging.warning("raw object without id: collection=%s properties=%s", raw_obj.collection, raw_obj.data)
 
         return obj
