@@ -1,0 +1,4 @@
+test:
+  override:
+    - pip install mypy-lang
+    - mypy --silent-imports segment_source_resource

@@ -1,22 +1,23 @@
-import sys
+import typing
 
 from gevent.pool import Group
+from gevent.thread import Greenlet
 
 from segment_source_resource.exceptions import PublicError, RunError
-from segment_source_resource.resource import RawObj, Obj
+from segment_source_resource.resource import RawObj, Obj, Resource
 from segment_source import client as source
 
 
 _errors = []
 
 
-def _create_error_handler(collection):
-    def handler(thread):
+def _create_error_handler(collection: str) -> typing.Callable[[Greenlet], None]:
+    def handler(thread: Greenlet) -> None:
         print("{} failed".format(collection))
         print(thread.exception)
 
         if isinstance(thread.exception, PublicError):
-            message = thread.exception.__str__()
+            message = str(thread.exception)
         else:
             message = 'Unexpected failure'
             _errors.append(thread.exception)
@@ -26,7 +27,7 @@ def _create_error_handler(collection):
     return handler
 
 
-def _process_resource(resources, seed, resource):
+def _process_resource(resources: typing.List[Resource], seed: typing.Any, resource: Resource):
     for raw_obj in resource.fetch(seed):
         if not isinstance(raw_obj, (Obj, RawObj)):
             raw_obj = RawObj(data=raw_obj, collection=resource.collection, schema=resource.schema)
@@ -40,7 +41,7 @@ def _process_resource(resources, seed, resource):
         _enqueue_children(resources, raw_obj, resource)
 
 
-def _enqueue_children(resources, seed, parent):
+def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent: Resource):
     threads = Group()
     for resource in [r for r in resources if r.parent == parent.name]:
         thread = threads.spawn(_process_resource, resources, seed, resource)
@@ -49,7 +50,7 @@ def _enqueue_children(resources, seed, parent):
     threads.join()
 
 
-def execute(resources, seed=None):
+def execute(resources: typing.List[Resource], seed: typing.Any = None):
     threads = Group()
     for resource in [r for r in resources if not r.parent]:
         thread = threads.spawn(_process_resource, resources, seed, resource)
