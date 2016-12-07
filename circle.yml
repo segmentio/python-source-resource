@@ -1,4 +1,9 @@
-test:
-  override:
+dependencies:
+  pre:
+    - pyenv local 3.5.2
+  post:
     - pip install mypy-lang
+
+test:
+  post:
     - mypy --silent-imports segment_source_resource
