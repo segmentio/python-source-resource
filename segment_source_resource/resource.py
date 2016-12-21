@@ -1,71 +1,75 @@
 import datetime
 import numbers
 import logging
+import typing
 
 from dateutil.parser import parse as parse_date
 from dateutil.tz import tzlocal
 from pydash import get
 
 
-def serialize_datetime(timestamp):
-    if isinstance(timestamp, datetime.date):
-        date = timestamp
+def parse_datetime(timestamp: typing.Union[datetime.datetime, str]) -> str:
+    if isinstance(timestamp, datetime.datetime):
+        value = timestamp
     else:
-        date = parse_date(timestamp)
+        value = parse_date(timestamp)
 
-    with_timezone = date.replace(tzinfo=date.tzinfo or tzlocal())
-    timestring = with_timezone.isoformat()
-
-    return timestring
+    with_timezone = value.replace(tzinfo=value.tzinfo or tzlocal())
+    return with_timezone.isoformat()
 
 
-def serialize_boolean(val):
-    if isinstance(val, bool): return val
+def parse_boolean(val: typing.Union[bool, str, typing.SupportsInt]) -> bool:
+    if isinstance(val, bool):
+        return val
 
     if isinstance(val, str):
         lowercased = val.lower()
-        if lowercased == 'false': return False
-        if lowercased == 'true': return True
+        if lowercased == 'false':
+            return False
+        if lowercased == 'true':
+            return True
 
     if isinstance(val, numbers.Number):
         as_int = int(val)
-        if as_int == 0: return False
-        if as_int == 1: return True
+        if as_int == 0:
+            return False
+        if as_int == 1:
+            return True
 
     raise TypeError("serialize_boolean() argument must be a boolean, string, "
                     "or number, not a {}".format(type(val)))
 
 
 class RawObj(object):
-    def __init__(self, data, collection, schema):
+    def __init__(self, data: dict, collection: str, schema: dict) -> None:
         self.data = data
         self.collection = collection
         self.schema = schema
 
 
 class Obj(object):
-    def __init__(self, id, properties, collection):
+    def __init__(self, id: str, properties: dict, collection: str) -> None:
         self.id = id
         self.properties = properties
         self.collection = collection
 
 
 class Resource(object):
-    parent = None
+    parent = None  # type: typing.Optional[Resource]
 
     @property
-    def name(self):
+    def name(self) -> str:
         raise NotImplementedError
 
     @property
-    def collection(self):
+    def collection(self) -> str:
         raise NotImplementedError
 
     @property
-    def schema(self):
+    def schema(self) -> dict:
         raise NotImplementedError
 
-    def fetch(self, seed):
+    def fetch(self, seed: typing.Any) -> typing.Generator[typing.Union[dict, RawObj, Obj], None, None]:
         """
         can yield values of:
         dict (in this case the're casted to instances RawObj using resource's default collection and schema)
@@ -78,16 +82,13 @@ class Resource(object):
         'string': str,
         'float': float,
         'integer': int,
-        'boolean': serialize_boolean,
-        'datetime': serialize_datetime
+        'boolean': parse_boolean,
+        'datetime': parse_datetime
     }
 
-    def transform(self, raw_obj, seed=None):
-        obj = Obj(
-            id=None,
-            properties={},
-            collection=raw_obj.collection,
-        )
+    def transform(self, raw_obj: RawObj, seed: typing.Any = None) -> Obj:
+        obj_id = None
+        obj_properties = {}
 
         for column, definition in raw_obj.schema.items():
             source_name = definition.get('path', column)
@@ -109,9 +110,9 @@ class Resource(object):
 
             try:
                 if column == 'id':
-                    obj.id = parser_func(source_value)
+                    obj_id = parser_func(source_value)
                 else:
-                    obj.properties[column] = parser_func(source_value)
+                    obj_properties[column] = parser_func(source_value)
 
             except (ValueError, TypeError) as err:
                 message = "Failed to cast {} with value {} to {}".format(
@@ -121,7 +122,11 @@ class Resource(object):
                 )
                 raise ValueError(message) from err
 
-        if not obj.id:
+        if not obj_id:
             logging.warning("raw object without id: collection=%s properties=%s", raw_obj.collection, raw_obj.data)
 
-        return obj
+        return Obj(
+            id=obj_id,
+            properties=obj_properties,
+            collection=raw_obj.collection,
+        )

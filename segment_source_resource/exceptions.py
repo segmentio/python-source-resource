@@ -1,15 +1,16 @@
-class PublicError(RuntimeError):
+import typing
 
-    def __init__(self, message):
+
+class PublicError(RuntimeError):
+    def __init__(self, message: str) -> None:
         super(RuntimeError, self).__init__(message)
 
 
 class RunError(RuntimeError):
-
-    def __init__(self, message, errors):
+    def __init__(self, message: str, errors: typing.List[Exception]) -> None:
         self._message = message
-        super(RuntimeError, self).__init__(message)
+        super().__init__(message)
         self._errors = errors
 
-    def __str__(self):
-        print("{}: {}", self._message, self._errors)
+    def __str__(self) -> str:
+        return "{}: {}".format(self._message, self._errors)
