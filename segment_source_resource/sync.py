@@ -44,11 +44,11 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
 def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent: Resource):
     threads = Group()
     for resource in [r for r in resources if r.parent == parent.name]:
-        seed = parent.get_subresource_fetch_arg(seed, resource)
-        if seed is None:
+        prepared_seed = parent.get_subresource_fetch_arg(seed, resource)
+        if prepared_seed is None:
             continue
 
-        thread = threads.spawn(_process_resource, resources, seed, resource)
+        thread = threads.spawn(_process_resource, resources, prepared_seed, resource)
         thread.link_exception(_create_error_handler(resource.collection))
 
     threads.join()
