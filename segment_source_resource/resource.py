@@ -86,6 +86,13 @@ class Resource(object):
         'datetime': parse_datetime
     }
 
+    def get_subresource_fetch_arg(self, raw_obj: RawObj, resource: "Resource") -> typing.Any:
+        """
+        Returns a value that will be used as a "seed" argument to enqueue child resource fetch tasks.
+        If None is returned, child resource tasks won't be enqueued.
+        """
+        return raw_obj
+
     def transform(self, raw_obj: RawObj, seed: typing.Any = None) -> Obj:
         obj_id = None
         obj_properties = {}
