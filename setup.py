@@ -11,8 +11,10 @@ setup(
     url='https://github.com/segmentio/python-source-resource',
     install_requires=[
         'pydash==3.4.3',
-        'gevent==1.1.1',
-        'python-dateutil==2.5.3',
+        'gevent==1.2.1',
+        'python-dateutil==2.6.0',
         'segment_source==0.9.1'
-    ]
+    ],
+    tests_require=['pytest'],
+    setup_requires=['pytest-runner'],
 )

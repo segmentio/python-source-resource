@@ -5,3 +5,6 @@ dist
 MANIFEST
 build
 .eggs
+__pycache__
+.git
+.cache

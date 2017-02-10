@@ -1,6 +1,6 @@
 import typing
 
-from gevent.pool import Group
+from gevent.pool import Pool
 from gevent.thread import Greenlet
 
 from segment_source_resource.exceptions import PublicError, RunError
@@ -42,7 +42,7 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
 
 
 def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent: Resource):
-    threads = Group()
+    threads = Pool(5)
     for resource in [r for r in resources if r.parent == parent.name]:
         prepared_seed = parent.get_subresource_fetch_arg(seed, resource)
         if prepared_seed is None:
@@ -55,7 +55,7 @@ def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent
 
 
 def execute(resources: typing.List[Resource], seed: typing.Any = None):
-    threads = Group()
+    threads = Pool(5)
     for resource in [r for r in resources if not r.parent]:
         thread = threads.spawn(_process_resource, resources, seed, resource)
         thread.link_exception(_create_error_handler(resource.collection))
