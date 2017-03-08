@@ -3,7 +3,7 @@ import typing
 from gevent.pool import Pool
 from gevent.thread import Greenlet
 
-from segment_source_resource.exceptions import PublicError, RunError
+from segment_source_resource.exceptions import PublicError, PublicWarning, RunError
 from segment_source_resource.resource import RawObj, Obj, Resource
 from segment_source import client as source
 
@@ -18,11 +18,14 @@ def _create_error_handler(collection: str) -> typing.Callable[[Greenlet], None]:
 
         if isinstance(thread.exception, PublicError):
             message = str(thread.exception)
+            source.report_error(message, collection)
+        if isinstance(thread.exception, PublicWarning):
+            message = str(thread.exception)
+            source.report_warning(message, collection)
         else:
             message = 'Unexpected failure'
             _errors.append(thread.exception)
-
-        source.report_error(message, collection)
+            source.report_error(message, collection)
 
     return handler
 

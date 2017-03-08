@@ -1,10 +1,12 @@
 import typing
 
-
 class PublicError(RuntimeError):
     def __init__(self, message: str) -> None:
         super(RuntimeError, self).__init__(message)
 
+class PublicWarning(RuntimeError):
+    def __init__(self, message: str) -> None:
+        super(RuntimeError, self).__init__(message)
 
 class RunError(RuntimeError):
     def __init__(self, message: str, errors: typing.List[Exception]) -> None:
