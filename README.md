@@ -30,8 +30,9 @@ password=...
 
 The password is in meldium.
 
-2. Tag and push tags.
-3. To release to pypi:
+2. Update "version" in setup.py
+3. Tag and push tags.
+4. To release to pypi:
 
 ```bash
 make dist
