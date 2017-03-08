@@ -18,3 +18,11 @@ repository=https://pypi.python.org/pypi
 username=segment
 password=...
 ```
+
+The password is in meldium.
+
+To release:
+
+```
+make dist
+```

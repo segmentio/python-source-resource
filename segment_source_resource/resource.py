@@ -49,7 +49,7 @@ class RawObj(object):
 
 class Obj(object):
     def __init__(self, id: str, properties: dict, collection: str) -> None:
-        self.id = id
+        self.id = str(id) # Comment(@Ilya): cast integer ids to string, per Marketo IDs
         self.properties = properties
         self.collection = collection
 
