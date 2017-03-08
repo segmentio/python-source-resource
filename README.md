@@ -4,9 +4,18 @@ Abstraction to make sources easier to write
 
 `pip install segment_source_resource`
 
+## Testing
+
+```bash
+pyenv virtualenv 3.5.2 python-source-resource
+. /Users/ivolo/.pyenv/versions/python-source-resource/bin/activate
+pip3 install -e .
+make test
+```
+
 ## Releasing
 
-Ensure your .pypirc looks like the following:
+1. Ensure your .pypirc looks like the following:
 
 ```
 [distutils]
@@ -21,8 +30,9 @@ password=...
 
 The password is in meldium.
 
-To release:
+2. Tag and push tags.
+3. To release to pypi:
 
-```
+```bash
 make dist
 ```
