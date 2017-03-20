@@ -1,4 +1,5 @@
 import typing
+import json
 
 from gevent.pool import Pool
 from gevent.thread import Greenlet
@@ -42,9 +43,15 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
         else:
             obj = resource.transform(raw_obj, seed)
 
-        source.set(obj.collection, obj.id, obj.properties)
-        thread = threads.spawn(_enqueue_children, resources, raw_obj, resource)
-        thread.link_exception(_create_error_handler(resource.collection))
+        try:
+            source.set(obj.collection, obj.id, obj.properties)
+            thread = threads.spawn(_enqueue_children, resources, raw_obj, resource)
+            thread.link_exception(_create_error_handler(resource.collection))
+        except:
+            # if there's an object being set that the server rejects, this log point
+            # will print it out so we can address it in the logs
+            print('source.set({}, {}, {})'.format(obj.collection, obj.id, json.dumps(obj.properties)))
+            raise
 
     threads.join()
 
