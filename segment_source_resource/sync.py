@@ -28,10 +28,13 @@ def _create_error_handler(collection: str) -> typing.Callable[[Greenlet], None]:
             _errors.append(thread.exception)
             source.report_error(message, collection)
 
+        source.lsp.error(collection=collection,operation="executing thread",error=str(thread.exception))
+
     return handler
 
 
 def _process_resource(resources: typing.List[Resource], seed: typing.Any, resource: Resource):
+    source.lsp.collection_started(collection=resource.collection)
     threads = Pool(10)
 
     for raw_obj in resource.fetch(seed):
@@ -54,7 +57,7 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
             raise
 
     threads.join()
-
+    source.lsp.collection_finished(collection=resource.collection)
 
 def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent: Resource):
     threads = Pool(10)
