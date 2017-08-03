@@ -13,7 +13,7 @@ setup(
         'pydash==3.4.3',
         'gevent==1.2.1',
         'python-dateutil==2.6.0',
-        'segment_source>=0.10.1'
+        'segment_source==0.10.1'
     ],
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
