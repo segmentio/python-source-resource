@@ -1,6 +1,0 @@
-machine:
-  python
-
-dependencies:
-  pre:
-    pip install -U pytest
