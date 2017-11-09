@@ -1,12 +1,27 @@
 import typing
 
+
 class PublicError(RuntimeError):
-    def __init__(self, message: str) -> None:
+    category = None
+    collection = None
+
+    def __init__(self, message: str, category: typing.Optional[str] = None,
+                 collection: typing.Optional[str] = None) -> None:
         super(RuntimeError, self).__init__(message)
+        self.category = category
+        self.collection = collection
+
 
 class PublicWarning(RuntimeError):
-    def __init__(self, message: str) -> None:
+    category = None
+    collection = None
+
+    def __init__(self, message: str, category: typing.Optional[str] = None,
+                 collection: typing.Optional[str] = None) -> None:
         super(RuntimeError, self).__init__(message)
+        self.category = category
+        self.collection = collection
+
 
 class RunError(RuntimeError):
     def __init__(self, message: str, errors: typing.List[Exception]) -> None:
