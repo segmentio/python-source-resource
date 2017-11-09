@@ -8,7 +8,6 @@ from segment_source_resource.exceptions import PublicError, PublicWarning, RunEr
 from segment_source_resource.resource import RawObj, Obj, Resource
 from segment_source import client as source
 
-
 _errors = []
 
 
@@ -19,16 +18,16 @@ def _create_error_handler(collection: str) -> typing.Callable[[Greenlet], None]:
 
         if isinstance(thread.exception, PublicError):
             message = str(thread.exception)
-            source.report_error(message, collection)
+            source.report_error(message, thread.exception.category, thread.exception.collection or collection)
         if isinstance(thread.exception, PublicWarning):
             message = str(thread.exception)
-            source.report_warning(message, collection)
+            source.report_warning(message, thread.exception.category, thread.exception.collection or collection)
         else:
             message = 'Unexpected failure'
             _errors.append(thread.exception)
-            source.report_error(message, collection)
+            source.report_error(message, source.INTERNAL_ERROR, collection)
 
-        source.lsp.error(collection=collection,operation="executing thread",error=str(thread.exception))
+        source.lsp.error(collection=collection, operation="executing thread", error=str(thread.exception))
 
     return handler
 
@@ -58,6 +57,7 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
 
     threads.join()
     source.lsp.collection_finished(collection=resource.collection)
+
 
 def _enqueue_children(resources: typing.List[Resource], seed: typing.Any, parent: Resource):
     threads = Pool(10)
