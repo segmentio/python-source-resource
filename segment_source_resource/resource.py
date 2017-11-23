@@ -1,11 +1,12 @@
 import datetime
 import numbers
-import logging
 import typing
 
 from dateutil.parser import parse as parse_date
 from dateutil.tz import tzlocal
 from pydash import get
+
+from . import log
 
 
 def parse_datetime(timestamp: typing.Union[datetime.datetime, str]) -> str:
@@ -130,7 +131,7 @@ class Resource(object):
                 raise ValueError(message) from err
 
         if not obj_id:
-            logging.warning("raw object without id: collection=%s properties=%s", raw_obj.collection, raw_obj.data)
+            log.warning("raw object without id", collection=raw_obj.collection, properties=raw_obj.data)
 
         return Obj(
             id=obj_id,

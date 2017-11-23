@@ -4,17 +4,18 @@ import json
 from gevent.pool import Pool
 from gevent.thread import Greenlet
 
-from segment_source_resource.exceptions import PublicError, PublicWarning, RunError
-from segment_source_resource.resource import RawObj, Obj, Resource
 from segment_source import client as source
+
+from .resource import RawObj, Obj, Resource
+from .exceptions import PublicError, PublicWarning, RunError
+from . import log
 
 _errors = []
 
 
 def _create_error_handler(collection: str) -> typing.Callable[[Greenlet], None]:
     def handler(thread: Greenlet) -> None:
-        print("{} failed".format(collection))
-        print(thread.exception)
+        log.error("resource thread failed", collection=collection, exc_info=thread.exc_info)
 
         if isinstance(thread.exception, PublicError):
             message = str(thread.exception)
@@ -49,10 +50,10 @@ def _process_resource(resources: typing.List[Resource], seed: typing.Any, resour
             source.set(obj.collection, obj.id, obj.properties)
             thread = threads.spawn(_enqueue_children, resources, raw_obj, resource)
             thread.link_exception(_create_error_handler(resource.collection))
-        except:
+        except Exception:
             # if there's an object being set that the server rejects, this log point
             # will print it out so we can address it in the logs
-            print('source.set({}, {}, {})'.format(obj.collection, obj.id, json.dumps(obj.properties)))
+            log.exception("source.set failed", collection=obj.collection, id=obj.id, properties=json.dumps(obj.properties))
             raise
 
     threads.join()
