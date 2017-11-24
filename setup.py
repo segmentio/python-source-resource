@@ -13,6 +13,7 @@ setup(
         'gevent',
         'python-dateutil',
         'segment_source==0.12.0',
+        'structlog',
     ],
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
