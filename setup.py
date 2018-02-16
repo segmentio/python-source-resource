@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='segment_source_resource',
     packages=['segment_source_resource'],
-    version='0.12.1',
+    version='0.13.0',
     description='Abstraction to make sources easier to write',
     author='Segment',
     author_email='friends@segment.com',
