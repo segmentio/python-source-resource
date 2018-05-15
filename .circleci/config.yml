@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: segment/sources-build-python:v1.1.0
+      - image: segment/sources-build-python:v1.2.0
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
