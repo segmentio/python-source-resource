@@ -15,6 +15,6 @@ setup(
         'segment_source==0.17.0',
         'structlog',
     ],
-    tests_require=['pytest'],
+    tests_require=['pytest,'],
     setup_requires=['pytest-runner'],
 )
