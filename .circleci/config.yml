@@ -11,10 +11,10 @@ jobs:
       - checkout
       - run:
           name: Installing dependencies
-          command: pip3 install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -e .
+          command: make install
       - run:
           name: Running tests
-          command: python3 setup.py test
+          command: make test
       - run:
           name: Building package
           command: |
