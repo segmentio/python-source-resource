@@ -43,3 +43,9 @@ jobs:
             else
               echo "skipping (no tag)"
             fi
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build: 
+          context: docker-publish
