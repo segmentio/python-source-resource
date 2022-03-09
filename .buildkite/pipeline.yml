@@ -4,7 +4,8 @@ env:
 
 steps:
   - label: "Installing dependencies"
-    command: pip3 install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
+    command: python -m pip install pip==18.1
+    pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
 
   - label: "Running tests"
     command: make test
