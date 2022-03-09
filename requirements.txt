@@ -1,4 +1,3 @@
-pip==21.0.1
 pydash
 gevent
 python-dateutil
