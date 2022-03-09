@@ -1,6 +1,6 @@
 env:
   SEGMENT_CONTEXTS: aws-credentials,snyk
-  SEGMENT_BUILDKITE_IMAGE: sources-build-python:v1.2.0
+  SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python
 
 steps:
   - label: "Installing dependencies"
