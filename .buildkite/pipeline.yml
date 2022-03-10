@@ -4,10 +4,10 @@ env:
 
 steps:
   - label: "Installing pip version"
-    command: pip install pip==20.2.4
+    command: /usr/bin/python3 -m pip install pip==20.2.4
 
   - label: "Installing dependencies"
-    command:  pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
+    command:  /usr/bin/python3 -m pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
 
   - label: "Running tests"
     command: make test
