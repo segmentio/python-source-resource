@@ -3,8 +3,11 @@ env:
   SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6-eculver-update-eventbridge-tags
 
 steps:
+  - label: "Installing pip version"
+    command: pip install pip==20.2.4
+
   - label: "Installing dependencies"
-    command: pip install -r requirements.txt
+    command:  pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
 
   - label: "Running tests"
     command: make test
