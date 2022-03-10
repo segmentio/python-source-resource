@@ -1,7 +1,6 @@
 pydash
 gevent
 python-dateutil
-segment_source==0.17.0
 structlog
 pytest
 pytest-runner
