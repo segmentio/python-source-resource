@@ -8,7 +8,6 @@ steps:
     agents:
       queue: v1
     commands: |
-      
       echo '--- installing pip version'
       /usr/bin/python3 -m pip install pip==20.2.4
 
@@ -18,27 +17,4 @@ steps:
       echo '--- Running tests'
       make test
 
-      echo '--- Building package'
-      tag=$(git tag --points-at HEAD)
-      if [ -n "$tag" ]; then
-        ver=$(python3 setup.py --version)
-        name=$(python3 setup.py --name)
-        if [ "$tag" == "v$ver" ]; then
-          rm -fr ./dist/
-          python3 setup.py sdist
-        else
-          echo "git tag doesn't match package version ($tag != v$ver)"
-          exit 1
-        fi
-      else
-        echo "skipping (no tag)"
-      fi
-
-      echo '--- Publishing package'
-      if [ -n "$(git tag --points-at HEAD)" ]; then
-        ver=$(python3 setup.py --version)
-        name=$(python3 setup.py --name)
-        package_cloud push segment/py-wheels/python dist/${name}-${ver}.tar.gz
-      else
-        echo "skipping (no tag)"
-      fi
+      
