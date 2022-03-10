@@ -1,6 +1,6 @@
 env:
   SEGMENT_CONTEXTS: aws-credentials,snyk
-  SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6-eculver-update-eventbridge-tags
+  SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6
 
 steps:
   - label: "Installing pip version"
