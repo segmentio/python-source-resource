@@ -3,17 +3,22 @@ env:
   SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6
 
 steps:
-  - label: "Installing pip version"
-    command: /usr/bin/python3 -m pip install pip==20.2.4
+  -
+  - label: ":brain: Everything"
+    agents:
+      queue: v1
+    commands: |
+      
+      echo '--- installing pip version'
+      /usr/bin/python3 -m pip install pip==20.2.4
 
-  - label: "Installing dependencies"
-    command:  /usr/bin/python3 -m pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
+      echo '--- Installing dependencies'
+      /usr/bin/python3 -m pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
 
-  - label: "Running tests"
-    command: make test
+      echo '--- Running tests'
+      make test
 
-  - label: "Building package"
-    command: |
+      echo '--- Building package'
       tag=$(git tag --points-at HEAD)
       if [ -n "$tag" ]; then
         ver=$(python3 setup.py --version)
@@ -29,8 +34,7 @@ steps:
         echo "skipping (no tag)"
       fi
 
-  - label: "Publishing package"
-    command: |
+      echo '--- Publishing package'
       if [ -n "$(git tag --points-at HEAD)" ]; then
         ver=$(python3 setup.py --version)
         name=$(python3 setup.py --name)
