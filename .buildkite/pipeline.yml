@@ -16,11 +16,11 @@ steps:
       make test
 
       echo '--- Building package'
-      tag=$(git tag --points-at HEAD)
+      tag=$(git describe --tags --abbrev=0)
       if [ -n "$tag" ]; then
         ver=$(python3 setup.py --version)
         name=$(python3 setup.py --name)
-        if [ "$tag" == "v$ver" ]; then
+        if [ "$tag" = "v$ver" ]; then
           rm -fr ./dist/
           python3 setup.py sdist
         else
@@ -32,7 +32,7 @@ steps:
       fi
 
       echo '--- Publishing package'
-      if [ -n "$(git tag --points-at HEAD)" ]; then
+      if [ -n "$(git describe --tags --abbrev=0)" ]; then
         ver=$(python3 setup.py --version)
         name=$(python3 setup.py --name)
         package_cloud push segment/py-wheels/python dist/${name}-${ver}.tar.gz

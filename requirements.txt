@@ -4,4 +4,4 @@ python-dateutil
 structlog
 pytest
 pytest-runner
-segment_source==0.17.0
+segment_source==0.17.1
