@@ -63,7 +63,7 @@ def std_processor(_, method_name, event_dict):
 
 def configure(levelname, **global_values):
     try:
-        level = structlog.stdlib.INFO
+        level = logging.INFO
         if levelname:
             level = structlog.stdlib._NAME_TO_LEVEL[levelname]
     except KeyError:
