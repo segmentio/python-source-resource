@@ -9,3 +9,4 @@ __pycache__
 .git
 .cache
 .pypirc
+.idea

@@ -1,0 +1,19 @@
+env:
+  SEGMENT_CONTEXTS: aws-credentials,snyk
+  SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6
+steps:
+  - label: ":brain: Everything"
+    agents:
+      queue: v1
+    commands: |
+      echo '--- installing pip version'
+      /usr/bin/python3 -m pip install pip==20.2.4
+
+      echo '--- Installing dependencies'
+      /usr/bin/python3 -m pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
+                
+      echo '--- Building package'
+      sh build.sh
+
+      echo '--- Publishing package'
+      sh publish.sh
