@@ -1,7 +1,7 @@
 pydash
 gevent
+grpcio==1.48.2
 python-dateutil
-segment_source==0.25.0
 structlog
 pytest
 pytest-runner
