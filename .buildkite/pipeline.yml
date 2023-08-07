@@ -10,8 +10,9 @@ steps:
       /usr/bin/python3 -m pip install pip==20.2.4
 
       echo '--- Installing dependencies'
-      /usr/bin/python3 -m pip install --extra-index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements.txt
-                
+      /usr/bin/python3 -m pip install -r requirements1.txt
+      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple -r requirements2.txt
+             
       echo '--- Building package'
       sh build.sh
 
