@@ -1,0 +1,36 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: python-source
+  description: Abstraction to make sources easier and safer to write
+  annotations:
+    github.com/project-slug: segmentio/python-source-resource
+    pagerduty.com/service-id:  PKZFNHW
+    jira/project-key: SRC
+    twilio.com/email: svc.test-account-cs@twilio.com
+    twilio.com/slack-id: C912LC1NE
+    segment.io/security-tier: "1"
+    twilio.com/eu-available: "true"
+    twilio.com/sla-impacting: "false"
+    twilio.com/in-scope-gdpr: "true"
+    twilio.com/in-scope-bcr: "true"
+    twilio.com/in-scope-hipaa: "true"
+    twilio.com/in-scope-sox: "true"
+    twilio.com/in-scope-soc2: "true"
+    twilio.com/in-scope-pci: "true"
+    twilio.com/in-scope-iso: "true"
+    twilio.com/data_classification: secret
+  tags:
+    - go
+  links:
+    - title: Buildkite
+      url: https://buildkite.com/segment/python-source-resource
+    - title: Runbook
+      url: https://docs.google.com/document/d/1LXLiGgR5Sg-79QznQ3zdQKVZv3LOa6lfBeyflBNoG6Q/edit?usp=sharing
+      type: runbook
+    - title: Jira
+      url: https://segment.atlassian.net/jira/software/c/projects/SRC/boards/105
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/cloud-sources
