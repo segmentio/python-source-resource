@@ -31,6 +31,6 @@ metadata:
     - title: Jira
       url: https://segment.atlassian.net/jira/software/c/projects/SRC/boards/105
 spec:
-  type: service
+  type: library
   lifecycle: production
   owner: group:default/cloud-sources
