@@ -6,10 +6,13 @@ steps:
     agents:
       queue: v1
     commands: |
-      echo '--- Ensuring pip is installed'
-      /usr/bin/python3 -m ensurepip --upgrade
-      
-      echo '--- installing pip version'
+      echo '--- Downloading get-pip.py'
+      curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+
+      echo '--- Installing pip'
+      /usr/bin/python3 get-pip.py
+
+      echo '--- Installing pip version'
       /usr/bin/python3 -m pip install pip==20.2.4
 
       echo '--- Installing dependencies'
