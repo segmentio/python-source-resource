@@ -1,6 +1,6 @@
 env:
   SEGMENT_CONTEXTS: aws-credentials,snyk
-  SEGMENT_BUILDKITE_IMAGE: buildkite-agent-python:3.7_0.6
+  SEGMENT_BUILDKITE_IMAGE: buildkite-agent:latest
 steps:
   - label: ":brain: Everything"
     agents:
@@ -11,10 +11,13 @@ steps:
 
       echo '--- Installing dependencies'
       /usr/bin/python3 -m pip install -r requirements.txt
-      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==0.25.0
+      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==0.28.0
              
       echo '--- Building package'
       sh build.sh
 
       echo '--- Publishing package'
       sh publish.sh
+    plugins:
+      - docker#v3.13.0:
+          image: python:3.10.0
