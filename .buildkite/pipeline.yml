@@ -6,6 +6,9 @@ steps:
     agents:
       queue: v1
     commands: |
+      echo '--- Ensuring pip is installed'
+      /usr/bin/python3 -m ensurepip --upgrade
+      
       echo '--- installing pip version'
       /usr/bin/python3 -m pip install pip==20.2.4
 
