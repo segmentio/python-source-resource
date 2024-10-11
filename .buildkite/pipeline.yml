@@ -17,7 +17,7 @@ steps:
 
       echo '--- Installing dependencies'
       /usr/bin/python3 -m pip install -r requirements.txt
-      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==0.28.0
+      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==v0.28.0
              
       echo '--- Building package'
       sh build.sh

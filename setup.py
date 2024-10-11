@@ -12,7 +12,7 @@ setup(
         'pydash',
         'gevent',
         'python-dateutil',
-        'segment_source==0.28.0',
+        'segment_source==v0.28.0',
         'structlog',
     ],
     tests_require=['pytest'],
