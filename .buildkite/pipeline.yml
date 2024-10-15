@@ -29,14 +29,14 @@ steps:
           image: python:3.10.0
 
 
-      - label: ":brain: Publish Package"
-        commands:
-          - gem install fpm package_cloud
-          - buildkite-agent artifact download "dist/*" .
-          - chmod +x ./dist/*
-          - sh publish.sh
-        plugins:
-          - docker#v3.3.0:
+  - label: ":brain: Publish Package"
+    commands:
+        - gem install fpm package_cloud
+        - buildkite-agent artifact download "dist/*" .
+        - chmod +x ./dist/*
+        - sh publish.sh
+    plugins:
+      - docker#v3.3.0:
               image: ruby:3.2
               environment:
                 # required to download the artifacts from s3
