@@ -1,3 +1,5 @@
+echo '--- Publishing package'
+git config --global --add safe.directory '*'
 if [ -n "$(git describe --tags --abbrev=0)" ]; then
   ver=$(git describe --tags --abbrev=0 | sed 's/^v//')
   name="segment_source_resource"
