@@ -5,6 +5,8 @@ steps:
   - label: ":brain: Build Package"
     agents:
       queue: v1
+    artifact_paths:
+      - "dist/*"
     commands: |
       echo '--- Downloading get-pip.py'
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
@@ -31,10 +33,20 @@ steps:
   - label: ":brain: Publish Package"
     commands:
         - gem install fpm package_cloud
+        - buildkite-agent artifact download "dist/*" .
+        - chmod +x ./dist/*
         - sh publish.sh
     plugins:
       - docker#v3.3.0:
               image: ruby:3.2
               environment:
+                # required to download the artifacts from s3
+                - AWS_REGION
+                - AWS_DEFAULT_REGION
+                - AWS_ACCESS_KEY_ID
+                - AWS_SECRET_ACCESS_KEY
+                - AWS_SESSION_TOKEN
+                # required by the makefile to properly tag and build
+                - BUILDKITE_BUILD_NUMBER
                 # required to publish to packagecloud.io
                 - PACKAGECLOUD_TOKEN
