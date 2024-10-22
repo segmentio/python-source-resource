@@ -1,7 +1,8 @@
 pydash
-gevent
+gevent==23.9.0
 grpcio==1.65.5
 python-dateutil
 structlog
 pytest
 pytest-runner
+setuptools==70.0.0
