@@ -31,6 +31,7 @@ steps:
   - wait: ~
 
   - label: ":brain: Publish Package"
+    if: build.branch == "master"
     commands:
         - gem install fpm package_cloud
         - buildkite-agent artifact download "dist/*" .
