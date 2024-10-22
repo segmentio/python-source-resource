@@ -5,3 +5,4 @@ python-dateutil
 structlog
 pytest
 pytest-runner
+setuptools==70.0.0
