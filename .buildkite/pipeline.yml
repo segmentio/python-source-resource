@@ -19,18 +19,19 @@ steps:
 
       echo '--- Installing dependencies'
       /usr/bin/python3 -m pip install -r requirements.txt
-      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==v0.27.0
+      /usr/bin/python3 -m pip install --index-url=https://packagecloud.io/segment/py-wheels/pypi/simple segment_source==v0.28.0
              
       echo '--- Building package'
       sh build.sh
 
     plugins:
       - docker#v3.13.0:
-          image: python:3.10.0
+          image: python:3.9.6
 
   - wait: ~
 
   - label: ":brain: Publish Package"
+    if: build.branch == "master"
     commands:
         - gem install fpm package_cloud
         - buildkite-agent artifact download "dist/*" .
