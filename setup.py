@@ -14,7 +14,6 @@ setup(
         'python-dateutil',
         'segment_source==v0.28.0',
         'structlog',
-        'setuptools==70.0.0',
     ],
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
