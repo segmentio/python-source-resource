@@ -19,7 +19,7 @@ metadata:
     twilio.com/in-scope-soc2: "true"
     twilio.com/in-scope-pci: "true"
     twilio.com/in-scope-iso: "true"
-    twilio.com/data_classification: secret
+    twilio.com/data-classification: secret
   tags:
     - go
   links:
